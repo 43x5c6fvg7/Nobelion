@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../data/mock/truck_data.dart';
 import '../../models/truck.dart';
+import 'dialogs/add_truck_dialog.dart';
 import 'widgets/fleet_search.dart';
 import 'widgets/fleet_stats.dart';
 import 'widgets/truck_card.dart';
@@ -20,7 +21,6 @@ class _FleetScreenState extends State<FleetScreen> {
   @override
   void initState() {
     super.initState();
-
     trucks = List.from(truckData);
     filteredTrucks = List.from(trucks);
   }
@@ -47,9 +47,8 @@ class _FleetScreenState extends State<FleetScreen> {
   int get offlineTrucks =>
       trucks.where((truck) => !truck.isOnline).length;
 
-  int get maintenanceTrucks => trucks
-      .where((truck) => truck.status.toLowerCase() == "maintenance")
-      .length;
+  int get maintenanceTrucks =>
+      trucks.where((truck) => truck.status.toLowerCase() == "maintenance").length;
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +56,17 @@ class _FleetScreenState extends State<FleetScreen> {
       appBar: AppBar(
         title: const Text("Fleet"),
       ),
+
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (_) => const AddTruckDialog(),
+          );
+        },
+        child: const Icon(Icons.add),
+      ),
+
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
