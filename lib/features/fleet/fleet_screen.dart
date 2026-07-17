@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../../data/mock/truck_data.dart';
 import '../../models/truck.dart';
+import '../../repositories/truck_repository.dart';
 
 import 'dialogs/add_truck_dialog.dart';
 import 'dialogs/edit_truck_dialog.dart';
@@ -10,6 +11,7 @@ import 'widgets/fleet_search.dart';
 import 'widgets/fleet_stats.dart';
 import 'widgets/truck_card.dart';
 
+
 class FleetScreen extends StatefulWidget {
   const FleetScreen({super.key});
 
@@ -17,34 +19,69 @@ class FleetScreen extends StatefulWidget {
   State<FleetScreen> createState() => _FleetScreenState();
 }
 
+
 class _FleetScreenState extends State<FleetScreen> {
+
   late List<Truck> trucks;
   late List<Truck> filteredTrucks;
+
 
   @override
   void initState() {
     super.initState();
 
-    trucks = List.from(truckData);
-    filteredTrucks = List.from(trucks);
+    trucks = [];
+    filteredTrucks = [];
   }
+
+
+
+  void loadTrucks(TruckRepository repository) {
+
+    if (trucks.isEmpty) {
+
+      trucks = List.from(repository.trucks);
+
+      filteredTrucks = List.from(trucks);
+
+    }
+
+  }
+
 
 
   void searchTruck(String query) {
+
     setState(() {
+
       if (query.isEmpty) {
+
         filteredTrucks = List.from(trucks);
+
       } else {
+
         filteredTrucks = trucks.where((truck) {
 
-          return truck.id.toLowerCase().contains(query.toLowerCase()) ||
-              truck.driver.toLowerCase().contains(query.toLowerCase()) ||
-              truck.status.toLowerCase().contains(query.toLowerCase());
+          return truck.id
+                  .toLowerCase()
+                  .contains(query.toLowerCase()) ||
+
+              truck.driver
+                  .toLowerCase()
+                  .contains(query.toLowerCase()) ||
+
+              truck.status
+                  .toLowerCase()
+                  .contains(query.toLowerCase());
 
         }).toList();
+
       }
+
     });
+
   }
+
 
 
   int get totalTrucks => trucks.length;
@@ -66,11 +103,16 @@ class _FleetScreenState extends State<FleetScreen> {
 
 
 
-  void addTruck(Truck truck) {
+  void addTruck(
+    TruckRepository repository,
+    Truck truck,
+  ) {
 
     setState(() {
 
-      trucks.add(truck);
+      repository.addTruck(truck);
+
+      trucks = List.from(repository.trucks);
 
       filteredTrucks = List.from(trucks);
 
@@ -80,13 +122,20 @@ class _FleetScreenState extends State<FleetScreen> {
 
 
 
-  void updateTruck(Truck updatedTruck, Truck oldTruck) {
+  void updateTruck(
+    TruckRepository repository,
+    Truck oldTruck,
+    Truck newTruck,
+  ) {
 
     setState(() {
 
-      final index = trucks.indexOf(oldTruck);
+      repository.updateTruck(
+        oldTruck,
+        newTruck,
+      );
 
-      trucks[index] = updatedTruck;
+      trucks = List.from(repository.trucks);
 
       filteredTrucks = List.from(trucks);
 
@@ -96,28 +145,40 @@ class _FleetScreenState extends State<FleetScreen> {
 
 
 
-  void deleteTruck(Truck truck) {
+  void deleteTruck(
+    TruckRepository repository,
+    Truck truck,
+  ) {
 
     setState(() {
 
-      trucks.remove(truck);
+      repository.deleteTruck(truck);
+
+      trucks = List.from(repository.trucks);
 
       filteredTrucks = List.from(trucks);
 
     });
 
   }
+
 
 
 
   @override
   Widget build(BuildContext context) {
 
+    final repository = context.watch<TruckRepository>();
+
+    loadTrucks(repository);
+
+
     return Scaffold(
 
       appBar: AppBar(
         title: const Text("Fleet"),
       ),
+
 
 
       floatingActionButton: FloatingActionButton(
@@ -130,7 +191,14 @@ class _FleetScreenState extends State<FleetScreen> {
 
             builder: (_) => AddTruckDialog(
 
-              onSave: addTruck,
+              onSave: (truck) {
+
+                addTruck(
+                  repository,
+                  truck,
+                );
+
+              },
 
             ),
 
@@ -141,6 +209,7 @@ class _FleetScreenState extends State<FleetScreen> {
         child: const Icon(Icons.add),
 
       ),
+
 
 
 
@@ -190,7 +259,7 @@ class _FleetScreenState extends State<FleetScreen> {
                 itemCount: filteredTrucks.length,
 
 
-                itemBuilder: (context, index) {
+                itemBuilder: (context,index) {
 
 
                   final truck = filteredTrucks[index];
@@ -203,13 +272,16 @@ class _FleetScreenState extends State<FleetScreen> {
 
                     onDelete: () {
 
-                      deleteTruck(truck);
+                      deleteTruck(
+                        repository,
+                        truck,
+                      );
 
                     },
 
 
-                    onEdit: () {
 
+                    onEdit: () {
 
                       showDialog(
 
@@ -223,10 +295,13 @@ class _FleetScreenState extends State<FleetScreen> {
 
                           onSave: (updatedTruck) {
 
+
                             updateTruck(
-                              updatedTruck,
+                              repository,
                               truck,
+                              updatedTruck,
                             );
+
 
                           },
 
@@ -234,8 +309,8 @@ class _FleetScreenState extends State<FleetScreen> {
 
                       );
 
-
                     },
+
 
                   );
 
@@ -246,6 +321,7 @@ class _FleetScreenState extends State<FleetScreen> {
 
             ),
 
+
           ],
 
         ),
@@ -255,4 +331,5 @@ class _FleetScreenState extends State<FleetScreen> {
     );
 
   }
+
 }
