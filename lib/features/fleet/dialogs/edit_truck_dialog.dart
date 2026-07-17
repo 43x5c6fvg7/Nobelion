@@ -2,49 +2,62 @@ import 'package:flutter/material.dart';
 
 import '../../../models/truck.dart';
 
-class AddTruckDialog extends StatefulWidget {
+class EditTruckDialog extends StatefulWidget {
+  final Truck truck;
   final Function(Truck) onSave;
 
-  const AddTruckDialog({
+  const EditTruckDialog({
     super.key,
+    required this.truck,
     required this.onSave,
   });
 
   @override
-  State<AddTruckDialog> createState() => _AddTruckDialogState();
+  State<EditTruckDialog> createState() => _EditTruckDialogState();
 }
 
-class _AddTruckDialogState extends State<AddTruckDialog> {
-  final idController = TextEditingController();
-  final driverController = TextEditingController();
-  final locationController = TextEditingController();
-  final cargoController = TextEditingController();
+class _EditTruckDialogState extends State<EditTruckDialog> {
+  late TextEditingController driverController;
+  late TextEditingController locationController;
+  late TextEditingController cargoController;
 
-  String status = "Online";
+  late String status;
+
+  @override
+  void initState() {
+    super.initState();
+
+    driverController =
+        TextEditingController(text: widget.truck.driver);
+
+    locationController =
+        TextEditingController(text: widget.truck.location);
+
+    cargoController =
+        TextEditingController(text: widget.truck.cargo);
+
+    status = widget.truck.status;
+  }
 
   @override
   void dispose() {
-    idController.dispose();
     driverController.dispose();
     locationController.dispose();
     cargoController.dispose();
     super.dispose();
   }
 
-  void saveTruck() {
-    final truck = Truck(
-      id: idController.text,
+  void saveEdit() {
+    final updatedTruck = widget.truck.copyWith(
       driver: driverController.text,
+      location: locationController.text,
+      cargo: cargoController.text,
       status: status,
       isOnline: status == "Online",
-      location: locationController.text,
-      capacity: "16 Tons",
-      cargo: cargoController.text,
-      fuel: 100,
-      lastUpdate: "Just now",
+      lastUpdate: "Updated now",
     );
 
-    widget.onSave(truck);
+    widget.onSave(updatedTruck);
 
     Navigator.pop(context);
   }
@@ -52,18 +65,13 @@ class _AddTruckDialogState extends State<AddTruckDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("Add Truck"),
+      title: Text(
+        "Edit ${widget.truck.id}",
+      ),
 
       content: SingleChildScrollView(
         child: Column(
           children: [
-
-            TextField(
-              controller: idController,
-              decoration: const InputDecoration(
-                labelText: "Truck ID",
-              ),
-            ),
 
             TextField(
               controller: driverController,
@@ -90,25 +98,30 @@ class _AddTruckDialogState extends State<AddTruckDialog> {
 
             DropdownButtonFormField<String>(
               initialValue: status,
+
               items: const [
                 DropdownMenuItem(
                   value: "Online",
                   child: Text("Online"),
                 ),
+
                 DropdownMenuItem(
                   value: "Offline",
                   child: Text("Offline"),
                 ),
+
                 DropdownMenuItem(
                   value: "Maintenance",
                   child: Text("Maintenance"),
                 ),
               ],
+
               onChanged: (value) {
                 setState(() {
                   status = value!;
                 });
               },
+
               decoration: const InputDecoration(
                 labelText: "Status",
               ),
@@ -127,7 +140,7 @@ class _AddTruckDialogState extends State<AddTruckDialog> {
         ),
 
         ElevatedButton(
-          onPressed: saveTruck,
+          onPressed: saveEdit,
           child: const Text("Save"),
         ),
 

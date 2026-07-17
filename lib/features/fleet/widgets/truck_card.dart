@@ -5,10 +5,14 @@ import '../truck_detail_screen.dart';
 
 class TruckCard extends StatelessWidget {
   final Truck truck;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
   const TruckCard({
     super.key,
     required this.truck,
+    this.onEdit,
+    this.onDelete,
   });
 
   @override
@@ -17,6 +21,7 @@ class TruckCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 15),
       elevation: 3,
       child: ListTile(
+
         onTap: () {
           Navigator.push(
             context,
@@ -27,6 +32,7 @@ class TruckCard extends StatelessWidget {
             ),
           );
         },
+
         leading: CircleAvatar(
           backgroundColor:
               truck.isOnline ? Colors.green : Colors.red,
@@ -35,17 +41,54 @@ class TruckCard extends StatelessWidget {
             color: Colors.white,
           ),
         ),
+
         title: Text(
           truck.id,
           style: const TextStyle(
             fontWeight: FontWeight.bold,
           ),
         ),
+
         subtitle: Text(
           "Driver: ${truck.driver}\nStatus: ${truck.status}",
         ),
-        trailing: const Icon(
-          Icons.arrow_forward_ios,
+
+        trailing: PopupMenuButton<String>(
+          onSelected: (value) {
+            if (value == "edit") {
+              onEdit?.call();
+            }
+
+            if (value == "delete") {
+              onDelete?.call();
+            }
+          },
+
+          itemBuilder: (context) => [
+
+            const PopupMenuItem(
+              value: "edit",
+              child: Row(
+                children: [
+                  Icon(Icons.edit),
+                  SizedBox(width: 10),
+                  Text("Edit"),
+                ],
+              ),
+            ),
+
+            const PopupMenuItem(
+              value: "delete",
+              child: Row(
+                children: [
+                  Icon(Icons.delete),
+                  SizedBox(width: 10),
+                  Text("Delete"),
+                ],
+              ),
+            ),
+
+          ],
         ),
       ),
     );
