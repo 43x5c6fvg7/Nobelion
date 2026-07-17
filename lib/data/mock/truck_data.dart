@@ -1,0 +1,48 @@
+import '../../models/truck.dart';
+
+final List<Truck> truckData = [
+  Truck(
+    id: "Truck #001",
+    driver: "Ali",
+    status: "Online",
+    isOnline: true,
+    location: "Tashkent",
+    capacity: "16 Tons",
+    cargo: "Electronics",
+    fuel: 80,
+    lastUpdate: "5 minutes ago",
+  ),
+  Truck(
+    id: "Truck #002",
+    driver: "Bekzod",
+    status: "Delivering",
+    isOnline: true,
+    location: "Samarkand",
+    capacity: "20 Tons",
+    cargo: "Food",
+    fuel: 62,
+    lastUpdate: "12 minutes ago",
+  ),
+  Truck(
+    id: "Truck #003",
+    driver: "Aziz",
+    status: "Maintenance",
+    isOnline: false,
+    location: "Bukhara",
+    capacity: "18 Tons",
+    cargo: "Empty",
+    fuel: 41,
+    lastUpdate: "35 minutes ago",
+  ),
+  Truck(
+    id: "Truck #004",
+    driver: "Jasur",
+    status: "Offline",
+    isOnline: false,
+    location: "Andijan",
+    capacity: "16 Tons",
+    cargo: "Furniture",
+    fuel: 14,
+    lastUpdate: "1 hour ago",
+  ),
+];

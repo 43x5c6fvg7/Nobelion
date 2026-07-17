@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../widgets/bottom_nav_bar.dart';
+import '../../core/widgets/bottom_nav_bar.dart';
 import '../fleet/fleet_screen.dart';
 import '../orders/orders_screen.dart';
 import '../ai/ai_screen.dart';

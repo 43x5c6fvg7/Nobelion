@@ -1,38 +1,12 @@
 import 'package:flutter/material.dart';
+import '../../models/truck.dart';
+import 'truck_detail_screen.dart';
+import '../../data/mock/truck_data.dart';
 
 class FleetScreen extends StatelessWidget {
-  const FleetScreen({super.key});
+  FleetScreen({super.key});
 
-  Widget truckCard({
-    required String truck,
-    required String driver,
-    required String status,
-    required Color color,
-  }) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 15),
-      elevation: 3,
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: color,
-          child: const Icon(
-            Icons.local_shipping,
-            color: Colors.white,
-          ),
-        ),
-        title: Text(
-          truck,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        subtitle: Text(
-          "Driver: $driver\nStatus: $status",
-        ),
-        trailing: const Icon(Icons.arrow_forward_ios),
-      ),
-    );
-  }
+ final List<Truck> trucks = truckData;
 
   @override
   Widget build(BuildContext context) {
@@ -40,38 +14,49 @@ class FleetScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Fleet"),
       ),
-      body: ListView(
+      body: ListView.builder(
         padding: const EdgeInsets.all(16),
-        children: [
+        itemCount: trucks.length,
+        itemBuilder: (context, index) {
+          final truck = trucks[index];
 
-          truckCard(
-            truck: "Truck #001",
-            driver: "Ali",
-            status: "Online",
-            color: Colors.green,
-          ),
-
-          truckCard(
-            truck: "Truck #002",
-            driver: "Bekzod",
-            status: "Delivering",
-            color: Colors.blue,
-          ),
-
-          truckCard(
-            truck: "Truck #003",
-            driver: "Aziz",
-            status: "Maintenance",
-            color: Colors.red,
-          ),
-
-          truckCard(
-            truck: "Truck #004",
-            driver: "Jasur",
-            status: "Offline",
-            color: Colors.orange,
-          ),
-        ],
+          return Card(
+            margin: const EdgeInsets.only(bottom: 15),
+            elevation: 3,
+            child: ListTile(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => TruckDetailScreen(
+                      truck: truck,
+                    ),
+                  ),
+                );
+              },
+              leading: CircleAvatar(
+                backgroundColor:
+                    truck.isOnline ? Colors.green : Colors.red,
+                child: const Icon(
+                  Icons.local_shipping,
+                  color: Colors.white,
+                ),
+              ),
+              title: Text(
+                truck.id,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              subtitle: Text(
+                "Driver: ${truck.driver}\nStatus: ${truck.status}",
+              ),
+              trailing: const Icon(
+                Icons.arrow_forward_ios,
+              ),
+            ),
+          );
+        },
       ),
     );
   }
