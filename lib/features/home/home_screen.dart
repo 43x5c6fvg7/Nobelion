@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../core/widgets/bottom_nav_bar.dart';
+import '../../data/mock/truck_data.dart';
+import '../ai/ai_screen.dart';
 import '../fleet/fleet_screen.dart';
 import '../orders/orders_screen.dart';
-import '../ai/ai_screen.dart';
 import '../settings/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -14,11 +15,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   int currentIndex = 0;
 
   final List<Widget> pages = [
-    DashboardPage(),
+    const DashboardPage(),
     FleetScreen(),
     OrdersScreen(),
     AiScreen(),
@@ -31,9 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text("Nobelion"),
       ),
-
       body: pages[currentIndex],
-
       bottomNavigationBar: NobelionBottomNavBar(
         currentIndex: currentIndex,
         onTap: (index) {
@@ -56,7 +54,11 @@ class DashboardPage extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            Icon(icon, size: 35, color: Colors.blue),
+            Icon(
+              icon,
+              size: 35,
+              color: Colors.blue,
+            ),
             const SizedBox(width: 15),
             Expanded(
               child: Column(
@@ -73,7 +75,7 @@ class DashboardPage extends StatelessWidget {
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -82,6 +84,16 @@ class DashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final totalTrucks = truckData.length;
+    final onlineTrucks =
+        truckData.where((truck) => truck.isOnline).length;
+    final offlineTrucks = totalTrucks - onlineTrucks;
+
+    final averageFuel = truckData
+            .map((truck) => truck.fuel)
+            .reduce((a, b) => a + b) ~/
+        totalTrucks;
+
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -92,12 +104,32 @@ class DashboardPage extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
+
         const SizedBox(height: 25),
 
-        buildCard("Today's Orders", "125", Icons.inventory),
-        buildCard("Active Trucks", "48", Icons.local_shipping),
-        buildCard("Drivers Online", "36", Icons.person),
-        buildCard("Today's Revenue", "\$12,450", Icons.attach_money),
+        buildCard(
+          "Total Trucks",
+          totalTrucks.toString(),
+          Icons.local_shipping,
+        ),
+
+        buildCard(
+          "Online Trucks",
+          onlineTrucks.toString(),
+          Icons.check_circle,
+        ),
+
+        buildCard(
+          "Offline Trucks",
+          offlineTrucks.toString(),
+          Icons.cancel,
+        ),
+
+        buildCard(
+          "Average Fuel",
+          "$averageFuel%",
+          Icons.local_gas_station,
+        ),
       ],
     );
   }
