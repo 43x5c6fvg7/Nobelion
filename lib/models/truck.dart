@@ -21,6 +21,7 @@ class Truck {
     required this.lastUpdate,
   });
 
+
   Truck copyWith({
     String? id,
     String? driver,
@@ -43,5 +44,35 @@ class Truck {
       fuel: fuel ?? this.fuel,
       lastUpdate: lastUpdate ?? this.lastUpdate,
     );
+  }
+
+
+  factory Truck.fromJson(Map<String, dynamic> json) {
+    return Truck(
+      id: json['id'] ?? '',
+      driver: json['driver'] ?? '',
+      status: json['status'] ?? '',
+      isOnline: json['isOnline'] ?? false,
+      location: json['location'] ?? '',
+      capacity: json['capacity'] ?? '',
+      cargo: json['cargo'] ?? '',
+      fuel: json['fuel'] ?? 0,
+      lastUpdate: json['lastUpdate'] ?? '',
+    );
+  }
+
+
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "driver": driver,
+      "status": status,
+      "isOnline": isOnline,
+      "location": location,
+      "capacity": capacity,
+      "cargo": cargo,
+      "fuel": fuel,
+      "lastUpdate": lastUpdate,
+    };
   }
 }

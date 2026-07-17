@@ -1,38 +1,123 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../data/mock/truck_data.dart';
 import '../models/truck.dart';
-import 'package:flutter/material.dart';
+
 
 class TruckRepository extends ChangeNotifier {
 
-  final List<Truck> _trucks = List.from(truckData);
+  List<Truck> _trucks = [];
 
 
-  List<Truck> get trucks {
-    return List.unmodifiable(_trucks);
+  List<Truck> get trucks =>
+      List.unmodifiable(_trucks);
+
+
+
+  Future<void> loadTrucks() async {
+
+    final prefs = await SharedPreferences.getInstance();
+
+    final data = prefs.getString("trucks");
+
+
+    if (data == null) {
+
+      _trucks = List.from(truckData);
+
+      await saveTrucks();
+
+    } else {
+
+      final List decoded = jsonDecode(data);
+
+      _trucks = decoded
+          .map(
+            (item) => Truck.fromJson(item),
+          )
+          .toList();
+
+    }
+
+
+    notifyListeners();
+
   }
 
 
-  void addTruck(Truck truck) {
+
+  Future<void> saveTrucks() async {
+
+    final prefs = await SharedPreferences.getInstance();
+
+
+    final data = jsonEncode(
+      _trucks
+          .map(
+            (truck) => truck.toJson(),
+          )
+          .toList(),
+    );
+
+
+    await prefs.setString(
+      "trucks",
+      data,
+    );
+
+  }
+
+
+
+  Future<void> addTruck(Truck truck) async {
+
     _trucks.add(truck);
+
+    await saveTrucks();
+
+    notifyListeners();
+
   }
 
 
-  void updateTruck(
+
+  Future<void> updateTruck(
     Truck oldTruck,
     Truck newTruck,
-  ) {
+  ) async {
+
 
     final index = _trucks.indexOf(oldTruck);
 
+
     if (index != -1) {
+
       _trucks[index] = newTruck;
+
+      await saveTrucks();
+
+      notifyListeners();
+
     }
 
   }
 
 
-  void deleteTruck(Truck truck) {
+
+
+  Future<void> deleteTruck(
+    Truck truck,
+  ) async {
+
     _trucks.remove(truck);
+
+    await saveTrucks();
+
+    notifyListeners();
+
   }
 
 }

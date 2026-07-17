@@ -4,11 +4,24 @@ import 'package:provider/provider.dart';
 import 'app.dart';
 import 'repositories/truck_repository.dart';
 
-void main() {
+
+void main() async {
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+
+  final repository = TruckRepository();
+
+  await repository.loadTrucks();
+
+
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => TruckRepository(),
+
+    ChangeNotifierProvider.value(
+      value: repository,
       child: const NobelionApp(),
     ),
+
   );
+
 }
