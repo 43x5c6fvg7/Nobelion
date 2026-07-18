@@ -1,115 +1,373 @@
 import 'package:flutter/material.dart';
+
 import '../../models/truck.dart';
 
+
 class TruckDetailScreen extends StatelessWidget {
+
   final Truck truck;
+
 
   const TruckDetailScreen({
     super.key,
     required this.truck,
   });
 
+
+
+  Widget infoCard(
+    String title,
+    String value,
+    IconData icon,
+  ) {
+
+    return Card(
+
+      elevation: 2,
+
+      margin:
+          const EdgeInsets.only(
+            bottom: 12,
+          ),
+
+
+      child: ListTile(
+
+        leading: Icon(
+          icon,
+          color: Colors.blue,
+        ),
+
+
+        title: Text(
+          title,
+          style:
+              const TextStyle(
+                color: Colors.grey,
+              ),
+        ),
+
+
+        subtitle: Text(
+
+          value,
+
+          style:
+              const TextStyle(
+                fontSize: 18,
+                fontWeight:
+                    FontWeight.bold,
+              ),
+
+        ),
+
+      ),
+
+    );
+
+  }
+
+
+
+
+
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
+
+
       appBar: AppBar(
-        title: Text(truck.id),
+
+        title:
+            Text(truck.id),
+
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+
+
+
+
+
+      body:
+
+          SingleChildScrollView(
+
+        padding:
+            const EdgeInsets.all(20),
+
+
+
+        child:
+
+            Column(
+
+          crossAxisAlignment:
+              CrossAxisAlignment.start,
+
+
+
           children: [
+
+
+
+
+
             Center(
-              child: CircleAvatar(
+
+              child:
+                  CircleAvatar(
+
+
                 radius: 45,
+
+
                 backgroundColor:
-                    truck.isOnline ? Colors.green : Colors.red,
-                child: const Icon(
+
+                    truck.isOnline
+
+                        ? Colors.green
+
+                        : Colors.red,
+
+
+
+                child:
+                    const Icon(
+
                   Icons.local_shipping,
+
                   size: 45,
-                  color: Colors.white,
+
+                  color:
+                      Colors.white,
+
                 ),
+
+
               ),
+
             ),
 
-            const SizedBox(height: 30),
 
-            Text(
-              "Truck ID",
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-              ),
+
+
+
+            const SizedBox(
+              height: 25,
             ),
 
-            Text(
-              truck.id,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+
+
+
+
+            Center(
+
+              child:
+
+                  Text(
+
+                truck.id,
+
+
+                style:
+                    const TextStyle(
+
+                      fontSize: 28,
+
+                      fontWeight:
+                          FontWeight.bold,
+
+                    ),
+
+
               ),
+
             ),
 
-            const SizedBox(height: 20),
 
-            Text(
+
+
+
+            const SizedBox(
+              height: 25,
+            ),
+
+
+
+
+
+            infoCard(
+
               "Driver",
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-              ),
-            ),
 
-            Text(
               truck.driver,
-              style: const TextStyle(
-                fontSize: 20,
-              ),
+
+              Icons.person,
+
             ),
 
-            const SizedBox(height: 20),
 
-            Text(
-              "Status",
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-              ),
+
+
+            infoCard(
+
+              "Location",
+
+              truck.location,
+
+              Icons.location_on,
+
             ),
 
-            Text(
-              truck.status,
-              style: const TextStyle(
-                fontSize: 20,
-              ),
+
+
+
+            infoCard(
+
+              "Cargo",
+
+              truck.cargo,
+
+              Icons.inventory,
+
             ),
 
-            const SizedBox(height: 30),
+
+
+
+            infoCard(
+
+              "Capacity",
+
+              truck.capacity,
+
+              Icons.scale,
+
+            ),
+
+
+
+
+            infoCard(
+
+              "Fuel",
+
+              "${truck.fuel}%",
+
+              Icons.local_gas_station,
+
+            ),
+
+
+
+
+            infoCard(
+
+              "Last Update",
+
+              truck.lastUpdate,
+
+              Icons.update,
+
+            ),
+
+
+
+
+
+            const SizedBox(
+              height: 15,
+            ),
+
+
+
+
 
             Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(
-                color: truck.isOnline
-                    ? Colors.green.shade100
-                    : Colors.red.shade100,
-                borderRadius: BorderRadius.circular(12),
+
+              width:
+                  double.infinity,
+
+
+              padding:
+                  const EdgeInsets.all(18),
+
+
+
+              decoration:
+
+                  BoxDecoration(
+
+                color:
+
+                    truck.isOnline
+
+                        ? Colors.green.shade100
+
+                        : Colors.red.shade100,
+
+
+
+                borderRadius:
+                    BorderRadius.circular(15),
+
+
               ),
-              child: Text(
+
+
+
+
+              child:
+
+                  Text(
+
+
                 truck.isOnline
+
                     ? "Truck is Online"
+
                     : "Truck is Offline",
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
+
+
+
+                textAlign:
+                    TextAlign.center,
+
+
+
+                style:
+
+                    const TextStyle(
+
+                  fontWeight:
+                      FontWeight.bold,
+
+
+                  fontSize:
+                      18,
+
                 ),
+
+
               ),
+
+
             ),
+
+
+
           ],
+
+
         ),
+
+
       ),
+
+
     );
+
   }
+
 }

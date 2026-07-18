@@ -3,25 +3,20 @@ import 'package:provider/provider.dart';
 
 import 'app.dart';
 import 'repositories/truck_repository.dart';
+import 'repositories/driver_repository.dart';
 
-
-void main() async {
-
-  WidgetsFlutterBinding.ensureInitialized();
-
-
-  final repository = TruckRepository();
-
-  await repository.loadTrucks();
-
-
+void main() {
   runApp(
-
-    ChangeNotifierProvider.value(
-      value: repository,
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => TruckRepository()..loadTrucks(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => DriverRepository()..loadDrivers(),
+        ),
+      ],
       child: const NobelionApp(),
     ),
-
   );
-
 }

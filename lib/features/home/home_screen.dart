@@ -1,137 +1,537 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../core/widgets/bottom_nav_bar.dart';
-import '../../data/mock/truck_data.dart';
-// import '../ai/ai_screen.dart';
+import '../../repositories/truck_repository.dart';
+
 import '../fleet/fleet_screen.dart';
+import '../drivers/drivers_screen.dart';
 import '../orders/orders_screen.dart';
-import '../settings/settings_screen.dart';
 import '../map/map_screen.dart';
 
+
+
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+
+  const HomeScreen({
+    super.key,
+  });
+
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<HomeScreen> createState() =>
+      _HomeScreenState();
+
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+
+
+
+class _HomeScreenState
+    extends State<HomeScreen> {
+
+
   int currentIndex = 0;
 
-  final List<Widget> pages = [
-    const DashboardPage(),
+
+
+  final List<Widget> pages = const [
+
+    DashboardPage(),
+
     FleetScreen(),
+
+    DriversScreen(),
+
     OrdersScreen(),
-  const MapScreen(),
-    SettingsScreen(),
+
+    MapScreen(),
+
   ];
 
+
+
+
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
+
+
       appBar: AppBar(
-        title: const Text("Nobelion"),
+
+        title:
+            const Text(
+              "Nobelion",
+            ),
+
       ),
-      body: pages[currentIndex],
-      bottomNavigationBar: NobelionBottomNavBar(
-        currentIndex: currentIndex,
-        onTap: (index) {
-          setState(() {
-            currentIndex = index;
-          });
-        },
-      ),
+
+
+
+
+      body:
+          pages[currentIndex],
+
+
+
+
+      bottomNavigationBar:
+          NobelionBottomNavBar(
+
+
+            currentIndex:
+                currentIndex,
+
+
+
+            onTap:
+                (index) {
+
+
+              setState(() {
+
+
+                currentIndex =
+                    index;
+
+
+              });
+
+
+            },
+
+
+          ),
+
+
     );
+
+
   }
+
+
 }
 
-class DashboardPage extends StatelessWidget {
-  const DashboardPage({super.key});
 
-  Widget buildCard(String title, String value, IconData icon) {
+
+
+
+
+
+class DashboardPage extends StatelessWidget {
+
+  const DashboardPage({
+    super.key,
+  });
+
+
+
+
+
+  Widget statCard({
+
+    required IconData icon,
+
+    required String title,
+
+    required String value,
+
+    required Color color,
+
+  }) {
+
+
     return Card(
+
       elevation: 3,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
+
+
+      shape:
+          RoundedRectangleBorder(
+
+            borderRadius:
+                BorderRadius.circular(18),
+
+          ),
+
+
+
+      child:
+
+          Padding(
+
+        padding:
+            const EdgeInsets.all(18),
+
+
+
+        child:
+
+            Row(
+
           children: [
-            Icon(
-              icon,
-              size: 35,
-              color: Colors.blue,
-            ),
-            const SizedBox(width: 15),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title),
-                  const SizedBox(height: 5),
-                  Text(
-                    value,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+
+
+
+            CircleAvatar(
+
+              radius:
+                  25,
+
+              child:
+                  Icon(
+
+                    icon,
+
+                    color:
+                        color,
+
                   ),
-                ],
-              ),
+
             ),
+
+
+
+            const SizedBox(
+              width: 15,
+            ),
+
+
+
+
+            Expanded(
+
+              child:
+
+                  Column(
+
+                crossAxisAlignment:
+                    CrossAxisAlignment.start,
+
+
+
+                children: [
+
+
+
+                  Text(
+
+                    title,
+
+                    style:
+                        const TextStyle(
+
+                          color:
+                              Colors.grey,
+
+                        ),
+
+                  ),
+
+
+
+
+                  const SizedBox(
+                    height: 6,
+                  ),
+
+
+
+
+
+                  Text(
+
+                    value,
+
+                    style:
+                        const TextStyle(
+
+                          fontWeight:
+                              FontWeight.bold,
+
+                          fontSize:
+                              22,
+
+                        ),
+
+                  ),
+
+
+
+                ],
+
+
+              ),
+
+            ),
+
+
+
           ],
+
+
         ),
+
+
       ),
+
+
     );
+
+
   }
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
-    final totalTrucks = truckData.length;
-    final onlineTrucks =
-        truckData.where((truck) => truck.isOnline).length;
-    final offlineTrucks = totalTrucks - onlineTrucks;
 
-    final averageFuel = truckData
-            .map((truck) => truck.fuel)
-            .reduce((a, b) => a + b) ~/
-        totalTrucks;
+
+
+    final trucks =
+        context.watch<TruckRepository>().trucks;
+
+
+
+    final total =
+        trucks.length;
+
+
+
+    final online =
+        trucks.where(
+          (e) => e.isOnline,
+        ).length;
+
+
+
+    final offline =
+        total - online;
+
+
+
+    final maintenance =
+        trucks.where(
+          (e) =>
+              e.status.toLowerCase()
+              ==
+              "maintenance",
+        ).length;
+
+
+
+
+    final averageFuel = trucks.isEmpty
+
+        ? 0.0
+
+        :
+
+        trucks
+            .map(
+              (e) => e.fuel,
+            )
+            .reduce(
+              (a,b) => a+b,
+            ) / total;
+
+
+
 
     return ListView(
-      padding: const EdgeInsets.all(16),
+
+      padding:
+          const EdgeInsets.all(16),
+
+
       children: [
+
+
+
         const Text(
+
           "Welcome Back 👋",
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
+
+          style:
+              TextStyle(
+
+                fontSize:
+                    30,
+
+                fontWeight:
+                    FontWeight.bold,
+
+              ),
+
+        ),
+
+
+
+
+        const SizedBox(
+          height: 25,
+        ),
+
+
+
+
+        statCard(
+
+          icon:
+              Icons.local_shipping,
+
+          title:
+              "Total Trucks",
+
+          value:
+              total.toString(),
+
+          color:
+              Colors.blue,
+
+        ),
+
+
+
+
+        statCard(
+
+          icon:
+              Icons.check_circle,
+
+          title:
+              "Online Trucks",
+
+          value:
+              online.toString(),
+
+          color:
+              Colors.green,
+
+        ),
+
+
+
+
+        statCard(
+
+          icon:
+              Icons.cancel,
+
+          title:
+              "Offline Trucks",
+
+          value:
+              offline.toString(),
+
+          color:
+              Colors.red,
+
+        ),
+
+
+
+
+        statCard(
+
+          icon:
+              Icons.build,
+
+          title:
+              "Maintenance",
+
+          value:
+              maintenance.toString(),
+
+          color:
+              Colors.orange,
+
+        ),
+
+
+
+
+        const SizedBox(
+          height: 25,
+        ),
+
+
+
+
+        LinearProgressIndicator(
+
+          value:
+              averageFuel / 100,
+
+          minHeight:
+              12,
+
+          borderRadius:
+              BorderRadius.circular(20),
+
+        ),
+
+
+
+
+        const SizedBox(
+          height: 30,
+        ),
+
+
+
+
+        const Card(
+
+          child:
+              Padding(
+
+            padding:
+                EdgeInsets.all(18),
+
+
+            child:
+                ListTile(
+
+              leading:
+                  Icon(
+                    Icons.memory,
+                    color: Colors.blue,
+                  ),
+
+
+              title:
+                  Text(
+                    "AI Engine",
+                  ),
+
+
+              subtitle:
+                  Text(
+                    "Ready",
+                  ),
+
+
+            ),
+
+
           ),
+
         ),
 
-        const SizedBox(height: 25),
 
-        buildCard(
-          "Total Trucks",
-          totalTrucks.toString(),
-          Icons.local_shipping,
-        ),
 
-        buildCard(
-          "Online Trucks",
-          onlineTrucks.toString(),
-          Icons.check_circle,
-        ),
-
-        buildCard(
-          "Offline Trucks",
-          offlineTrucks.toString(),
-          Icons.cancel,
-        ),
-
-        buildCard(
-          "Average Fuel",
-          "$averageFuel%",
-          Icons.local_gas_station,
-        ),
       ],
+
+
     );
+
+
   }
+
+
 }

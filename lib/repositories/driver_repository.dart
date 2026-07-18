@@ -3,42 +3,51 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/truck.dart';
+import '../models/driver.dart';
 
 
-class TruckRepository extends ChangeNotifier {
-
-  List<Truck> _trucks = [];
+class DriverRepository extends ChangeNotifier {
 
 
-  List<Truck> get trucks =>
-      List.unmodifiable(_trucks);
+  List<Driver> _drivers = [];
 
 
 
-  Future<void> loadTrucks() async {
+  List<Driver> get drivers =>
+      List.unmodifiable(_drivers);
+
+
+
+
+
+  Future<void> loadDrivers() async {
+
 
     final prefs =
         await SharedPreferences.getInstance();
 
 
+
     final data =
-        prefs.getString("trucks");
+        prefs.getString("drivers");
 
 
 
     if (data != null) {
 
+
       final List decoded =
           jsonDecode(data);
 
 
-      _trucks = decoded
+
+      _drivers = decoded
           .map(
             (item) =>
-                Truck.fromJson(item),
+                Driver.fromJson(item),
           )
           .toList();
+
 
     }
 
@@ -52,7 +61,10 @@ class TruckRepository extends ChangeNotifier {
 
 
 
-  Future<void> saveTrucks() async {
+
+
+  Future<void> saveDrivers() async {
+
 
     final prefs =
         await SharedPreferences.getInstance();
@@ -61,21 +73,24 @@ class TruckRepository extends ChangeNotifier {
 
     final data =
         jsonEncode(
-          _trucks
+
+          _drivers
               .map(
-                (truck) =>
-                    truck.toJson(),
+                (driver) =>
+                    driver.toJson(),
               )
               .toList(),
+
         );
 
 
 
     await prefs.setString(
-      "trucks",
+      "drivers",
       data,
     );
 
+
   }
 
 
@@ -83,16 +98,22 @@ class TruckRepository extends ChangeNotifier {
 
 
 
-  Future<void> addTruck(
-    Truck truck,
+
+
+  Future<void> addDriver(
+    Driver driver,
   ) async {
 
-    _trucks.add(truck);
 
-    await saveTrucks();
+    _drivers.add(driver);
+
+
+    await saveDrivers();
+
 
     notifyListeners();
 
+
   }
 
 
@@ -101,28 +122,34 @@ class TruckRepository extends ChangeNotifier {
 
 
 
-  Future<void> updateTruck(
-    Truck oldTruck,
-    Truck newTruck,
+  Future<void> updateDriver(
+    Driver oldDriver,
+    Driver newDriver,
   ) async {
 
 
     final index =
-        _trucks.indexOf(oldTruck);
+        _drivers.indexOf(oldDriver);
 
 
 
     if (index != -1) {
 
-      _trucks[index] = newTruck;
+
+      _drivers[index] =
+          newDriver;
 
 
-      await saveTrucks();
+
+      await saveDrivers();
+
 
 
       notifyListeners();
 
+
     }
+
 
   }
 
@@ -132,19 +159,23 @@ class TruckRepository extends ChangeNotifier {
 
 
 
-  Future<void> deleteTruck(
-    Truck truck,
+  Future<void> deleteDriver(
+    Driver driver,
   ) async {
 
 
-    _trucks.remove(truck);
+    _drivers.remove(driver);
 
 
-    await saveTrucks();
+
+    await saveDrivers();
+
 
 
     notifyListeners();
 
+
   }
+
 
 }

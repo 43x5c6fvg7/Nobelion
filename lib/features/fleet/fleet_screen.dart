@@ -98,19 +98,22 @@ class _FleetScreenState extends State<FleetScreen> {
   int get maintenanceTrucks =>
       trucks.where(
         (truck) =>
-            truck.status.toLowerCase() == "maintenance",
+            truck.status.toLowerCase() ==
+            "maintenance",
       ).length;
 
 
 
-  void addTruck(
+
+  Future<void> addTruck(
     TruckRepository repository,
     Truck truck,
-  ) {
+  ) async {
+
+    await repository.addTruck(truck);
+
 
     setState(() {
-
-      repository.addTruck(truck);
 
       trucks = List.from(repository.trucks);
 
@@ -122,18 +125,22 @@ class _FleetScreenState extends State<FleetScreen> {
 
 
 
-  void updateTruck(
+
+
+  Future<void> updateTruck(
     TruckRepository repository,
     Truck oldTruck,
     Truck newTruck,
-  ) {
+  ) async {
+
+
+    await repository.updateTruck(
+      oldTruck,
+      newTruck,
+    );
+
 
     setState(() {
-
-      repository.updateTruck(
-        oldTruck,
-        newTruck,
-      );
 
       trucks = List.from(repository.trucks);
 
@@ -145,14 +152,18 @@ class _FleetScreenState extends State<FleetScreen> {
 
 
 
-  void deleteTruck(
+
+
+  Future<void> deleteTruck(
     TruckRepository repository,
     Truck truck,
-  ) {
+  ) async {
+
+
+    await repository.deleteTruck(truck);
+
 
     setState(() {
-
-      repository.deleteTruck(truck);
 
       trucks = List.from(repository.trucks);
 
@@ -161,6 +172,8 @@ class _FleetScreenState extends State<FleetScreen> {
     });
 
   }
+
+
 
 
 
@@ -168,9 +181,13 @@ class _FleetScreenState extends State<FleetScreen> {
   @override
   Widget build(BuildContext context) {
 
-    final repository = context.watch<TruckRepository>();
+
+    final repository =
+        context.watch<TruckRepository>();
+
 
     loadTrucks(repository);
+
 
 
     return Scaffold(
@@ -178,6 +195,7 @@ class _FleetScreenState extends State<FleetScreen> {
       appBar: AppBar(
         title: const Text("Fleet"),
       ),
+
 
 
 
@@ -189,14 +207,17 @@ class _FleetScreenState extends State<FleetScreen> {
 
             context: context,
 
+
             builder: (_) => AddTruckDialog(
 
-              onSave: (truck) {
+              onSave: (truck) async {
 
-                addTruck(
+
+                await addTruck(
                   repository,
                   truck,
                 );
+
 
               },
 
@@ -206,9 +227,13 @@ class _FleetScreenState extends State<FleetScreen> {
 
         },
 
-        child: const Icon(Icons.add),
+
+        child: const Icon(
+          Icons.add,
+        ),
 
       ),
+
 
 
 
@@ -217,9 +242,11 @@ class _FleetScreenState extends State<FleetScreen> {
 
         padding: const EdgeInsets.all(16),
 
+
         child: Column(
 
           children: [
+
 
 
             FleetStats(
@@ -236,7 +263,9 @@ class _FleetScreenState extends State<FleetScreen> {
 
 
 
+
             const SizedBox(height: 20),
+
 
 
 
@@ -248,7 +277,10 @@ class _FleetScreenState extends State<FleetScreen> {
 
 
 
+
             const SizedBox(height: 20),
+
+
 
 
 
@@ -256,13 +288,19 @@ class _FleetScreenState extends State<FleetScreen> {
 
               child: ListView.builder(
 
-                itemCount: filteredTrucks.length,
+                itemCount:
+                    filteredTrucks.length,
 
 
-                itemBuilder: (context,index) {
+
+                itemBuilder:
+                    (context, index) {
 
 
-                  final truck = filteredTrucks[index];
+
+                  final truck =
+                      filteredTrucks[index];
+
 
 
                   return TruckCard(
@@ -270,12 +308,15 @@ class _FleetScreenState extends State<FleetScreen> {
                     truck: truck,
 
 
-                    onDelete: () {
 
-                      deleteTruck(
+                    onDelete: () async {
+
+
+                      await deleteTruck(
                         repository,
                         truck,
                       );
+
 
                     },
 
@@ -283,31 +324,45 @@ class _FleetScreenState extends State<FleetScreen> {
 
                     onEdit: () {
 
+
                       showDialog(
+
 
                         context: context,
 
 
-                        builder: (_) => EditTruckDialog(
 
-                          truck: truck,
-
-
-                          onSave: (updatedTruck) {
+                        builder: (_) =>
+                            EditTruckDialog(
 
 
-                            updateTruck(
-                              repository,
-                              truck,
-                              updatedTruck,
-                            );
+                              truck: truck,
 
 
-                          },
 
-                        ),
+                              onSave:
+                                  (updatedTruck) async {
+
+
+
+                                await updateTruck(
+
+                                  repository,
+
+                                  truck,
+
+                                  updatedTruck,
+
+                                );
+
+
+                              },
+
+                            ),
+
 
                       );
+
 
                     },
 
@@ -324,9 +379,11 @@ class _FleetScreenState extends State<FleetScreen> {
 
           ],
 
+
         ),
 
       ),
+
 
     );
 
