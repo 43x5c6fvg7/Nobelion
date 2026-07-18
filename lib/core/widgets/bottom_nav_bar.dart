@@ -34,10 +34,10 @@ class NobelionBottomNavBar extends StatelessWidget {
           label: "Orders",
         ),
 
-        BottomNavigationBarItem(
-          icon: Icon(Icons.smart_toy),
-          label: "AI",
-        ),
+       BottomNavigationBarItem(
+  icon: Icon(Icons.map),
+  label: "Map",
+),
 
         BottomNavigationBarItem(
           icon: Icon(Icons.settings),

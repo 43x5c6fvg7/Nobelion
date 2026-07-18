@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../../core/widgets/bottom_nav_bar.dart';
 import '../../data/mock/truck_data.dart';
-import '../ai/ai_screen.dart';
+// import '../ai/ai_screen.dart';
 import '../fleet/fleet_screen.dart';
 import '../orders/orders_screen.dart';
 import '../settings/settings_screen.dart';
+import '../map/map_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
     const DashboardPage(),
     FleetScreen(),
     OrdersScreen(),
-    AiScreen(),
+  const MapScreen(),
     SettingsScreen(),
   ];
 
